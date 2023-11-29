@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
         user.setContactNumber(requestMap.get("contactNumber"));
         user.setEmail(requestMap.get("email"));
         user.setPassword(requestMap.get("password"));
-        user.setStatus("false");
+        user.setStatus("true");
         user.setRole("User");
         return user;
     }
@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<List<UserWrapper>> getAllUser() {
         try {
-            if (jwtFilter.isAdmin()){
+            if (jwtFilter.isRestaurant()){
                 return new ResponseEntity<>(userDao.getAllUser(),HttpStatus.OK);
 
             }else {
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<String> update(Map<String, String> requestMap) {
         try{
-            if (jwtFilter.isAdmin()){
+            if (jwtFilter.isRestaurant()){
                 Optional<User> optional= userDao.findById(Integer.parseInt(requestMap.get("id")));
                 if (!optional.isEmpty()){
                     userDao.updateStatus(requestMap.get("status"),Integer.parseInt(requestMap.get("id")));
