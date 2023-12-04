@@ -1,12 +1,17 @@
 package com.fileupload.Fileupload.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-
+@Slf4j
 public class ImageUtils {
     public static byte[] compressImage(byte[] data){
+
+        log.info("Inside compressImage");
+
         Deflater deflater = new Deflater();
         deflater.setLevel(Deflater.BEST_COMPRESSION);
         deflater.setInput(data);
@@ -28,6 +33,7 @@ public class ImageUtils {
     }
 
     public static byte[] decompressImage(byte[] data){
+        log.info("Inside decompressImage");
         Inflater inflater = new Inflater();
         inflater.setInput(data);
         ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream(data.length);

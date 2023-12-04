@@ -2,6 +2,7 @@ package com.fileupload.Fileupload.service;
 
 import com.fileupload.Fileupload.entity.UsersModel;
 import com.fileupload.Fileupload.repository.UsersRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,11 @@ public class UsersService {
 
     public UsersModel authenticate(String login, String password){
         return usersRepository.findByLoginAndPassword(login,password).orElse(null);
+    }
+
+    public UsersModel findByID(Integer userId){
+        return usersRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found Exception"+userId));
     }
 
 
