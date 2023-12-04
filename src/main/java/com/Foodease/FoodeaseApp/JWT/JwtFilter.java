@@ -54,8 +54,8 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(httpServletRequest,httpServletResponse);
         }
     }
-    public boolean isAdmin(){
-        return  "admin".equalsIgnoreCase((String) claims.get("role"));
+    public boolean isRestaurant(){
+        return  "restaurant".equalsIgnoreCase((String) claims.get("role"));
     }
 
     public boolean isUser(){

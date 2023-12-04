@@ -2,19 +2,24 @@ package com.Foodease.FoodeaseApp.serviceImpl;
 
 import com.Foodease.FoodeaseApp.JWT.JwtFilter;
 import com.Foodease.FoodeaseApp.POJO.Category;
+import com.Foodease.FoodeaseApp.POJO.CategoryType;
 import com.Foodease.FoodeaseApp.POJO.Dish;
 import com.Foodease.FoodeaseApp.POJO.User;
 import com.Foodease.FoodeaseApp.constant.RestaurantConstants;
 import com.Foodease.FoodeaseApp.dao.DishDao;
 import com.Foodease.FoodeaseApp.service.DishService;
 import com.Foodease.FoodeaseApp.utils.RestaurantUtils;
+import com.Foodease.FoodeaseApp.wrapper.DishWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class DishServiceImpl implements DishService {
@@ -28,7 +33,7 @@ public class DishServiceImpl implements DishService {
     @Override
     public ResponseEntity<String> addNewDish(Map<String, String> requestMap) {
         try {
-            if (jwtFilter.isAdmin()){
+            if (jwtFilter.isRestaurant()){
                 if (validateDishMap(requestMap,false)){
                     dishDao.save(getDishFromMap(requestMap,false));
                     return RestaurantUtils.getResponseEntity("Dish Added Successfully",HttpStatus.OK);
@@ -48,6 +53,7 @@ public class DishServiceImpl implements DishService {
 
 
 
+
     private boolean validateDishMap(Map<String, String> requestMap, boolean validateId) {
         if (requestMap.containsKey("name")){
             if (requestMap.containsKey("id") && validateId){
@@ -63,6 +69,9 @@ public class DishServiceImpl implements DishService {
         Category category1 = new Category();
         category1.setId(Integer.parseInt(requestMap.get("categ_Id")));
 
+        CategoryType categoryType1 = new CategoryType();
+        categoryType1.setId(Integer.parseInt(requestMap.get("catType")));
+
         User user1 = new User();
         user1.setId(Integer.parseInt(requestMap.get("rest_Id")));
 
@@ -75,6 +84,7 @@ public class DishServiceImpl implements DishService {
             dish.setAvailability("true");
         }
         dish.setCategory(category1);
+        dish.setCategoryType(categoryType1);
         dish.setUser(user1);
         dish.setName(requestMap.get("name"));
         dish.setDescription(requestMap.get("description"));
@@ -84,5 +94,87 @@ public class DishServiceImpl implements DishService {
         //dish.setImageData(requestMap.get("imageData").getBytes());
         return dish;
 
+    }
+
+    @Override
+    public ResponseEntity<List<DishWrapper>> getAllDish() {
+        try {
+            return new ResponseEntity<>(dishDao.getAllDish(),HttpStatus.OK);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(new ArrayList<>(),HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> updateDish(Map<String, String> requestMap) {
+        try {
+            if (jwtFilter.isRestaurant()){
+                if (validateDishMap(requestMap,true)){
+                   Optional<Dish> optional= dishDao.findById(Integer.parseInt(requestMap.get("id")));
+                   if (!optional.isEmpty()){
+                       Dish dish = getDishFromMap(requestMap,true);
+                       dish.setAvailability(optional.get().getAvailability());
+                       dishDao.save(dish);
+                       return RestaurantUtils.getResponseEntity("Dish updated Successfully",HttpStatus.OK);
+                   }else {
+                       return RestaurantUtils.getResponseEntity("Dish id Does not Exist",HttpStatus.OK);
+                   }
+
+                }else {
+                    return RestaurantUtils.getResponseEntity(RestaurantConstants.Invalid_Data,HttpStatus.BAD_REQUEST);
+                }
+
+            }else {
+                return RestaurantUtils.getResponseEntity(RestaurantConstants.Unauthorized_Access,HttpStatus.UNAUTHORIZED);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return RestaurantUtils.getResponseEntity(RestaurantConstants.Something_Went_Wrong,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> deleteDish(Integer id) {
+        try {
+            if (jwtFilter.isRestaurant()){
+                Optional optional = dishDao.findById(id);
+                if (!optional.isEmpty()){
+                    dishDao.deleteById(id);
+                    return RestaurantUtils.getResponseEntity("Dish Deleted Successfully",HttpStatus.OK);
+                }
+                return RestaurantUtils.getResponseEntity("Dish id Does not exist",HttpStatus.OK);
+
+            }else {
+                return RestaurantUtils.getResponseEntity(RestaurantConstants.Unauthorized_Access,HttpStatus.UNAUTHORIZED);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return RestaurantUtils.getResponseEntity(RestaurantConstants.Something_Went_Wrong,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> updateAvail(Map<String, String> requestMap) {
+        try {
+            if (jwtFilter.isRestaurant()){
+                Optional optional = dishDao.findById(Integer.parseInt(requestMap.get("id")));
+                if (!optional.isEmpty()){
+                    dishDao.updateDishStatus(requestMap.get("availability"),Integer.parseInt(requestMap.get("id")));
+                    return RestaurantUtils.getResponseEntity("Dish Availability Updated Successfully",HttpStatus.OK);
+                }else {
+                    return RestaurantUtils.getResponseEntity("Dish Id does not Exist",HttpStatus.OK);
+                }
+            }else {
+                return RestaurantUtils.getResponseEntity(RestaurantConstants.Unauthorized_Access,HttpStatus.UNAUTHORIZED);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return RestaurantUtils.getResponseEntity(RestaurantConstants.Something_Went_Wrong,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -49,7 +49,7 @@ public class UserRestImpl implements UserRest {
         }catch (Exception e){
             e.printStackTrace();
         }
-        return new ResponseEntity<List<UserWrapper>>(new ArrayList<>(),HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity< List<UserWrapper> >(new ArrayList<>(),HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override

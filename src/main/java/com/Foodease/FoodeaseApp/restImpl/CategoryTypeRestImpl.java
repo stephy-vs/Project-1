@@ -1,9 +1,10 @@
 package com.Foodease.FoodeaseApp.restImpl;
 
-import com.Foodease.FoodeaseApp.POJO.Category;
+import com.Foodease.FoodeaseApp.POJO.CategoryType;
 import com.Foodease.FoodeaseApp.constant.RestaurantConstants;
 import com.Foodease.FoodeaseApp.rest.CategoryRest;
-import com.Foodease.FoodeaseApp.service.CategoryService;
+import com.Foodease.FoodeaseApp.rest.CategoryTypeRest;
+import com.Foodease.FoodeaseApp.service.CategoryTypeService;
 import com.Foodease.FoodeaseApp.utils.RestaurantUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,13 +16,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class CategoryRestImpl implements CategoryRest {
+public class CategoryTypeRestImpl implements CategoryTypeRest {
     @Autowired
-    CategoryService categoryService;
+    CategoryTypeService categoryTypeService;
     @Override
-    public ResponseEntity<String> addNewCategory(Map<String, String> requestMap) {
+    public ResponseEntity<String> addType(Map<String, String> requestMap) {
         try {
-            return categoryService.addNewCategory(requestMap);
+            return categoryTypeService.addType(requestMap);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -30,9 +31,9 @@ public class CategoryRestImpl implements CategoryRest {
     }
 
     @Override
-    public ResponseEntity<List<Category>> getAllCategory(String filterValue) {
+    public ResponseEntity<List<CategoryType>> getAllType(String filterValue) {
         try {
-            return categoryService.getAllCategory(filterValue);
+            return categoryTypeService.getAllType(filterValue);
 
         }catch (Exception e){
             e.printStackTrace();

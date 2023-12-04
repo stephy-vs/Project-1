@@ -4,18 +4,17 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.context.annotation.ComponentScan;
 
 import java.io.Serializable;
 
-@NamedQuery(name = "Category.getAllCategory",query = "select c from Category c")
+@NamedQuery(name = "CategoryType.getAllCategoryType",query = "select c from CategoryType c")
 @Data
 @Entity
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "category")
+@Table(name = "catType")
 
-public class Category implements Serializable {
+public class CategoryType implements Serializable {
     private static final long serialVersionUID =1L;
 
     @Id
@@ -25,5 +24,4 @@ public class Category implements Serializable {
 
     @Column(name = "name")
     private String name;
-
 }
