@@ -15,18 +15,18 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dbimg")
+@RequestMapping(path = "/dbimg")
 public class StorageController {
     @Autowired
     private StorageService storageService;
-    @PostMapping("/upimg")
+    @PostMapping(path = "/upimg")
     public ResponseEntity<?> uploadImage(@RequestParam("image")MultipartFile file) throws IOException {
         String uploadImage = storageService.uploadImage(file);
         return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
 
     }
 
-    @GetMapping("/dowimg")
+    @GetMapping(path = "/dowimg")
     public List<ImageData>getDetails(){
         return storageService.getDetails();
     }
